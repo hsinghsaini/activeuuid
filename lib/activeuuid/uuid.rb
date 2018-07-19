@@ -103,7 +103,7 @@ module ActiveUUID
       class_attribute :_uuid_generator, instance_writer: false
       self._uuid_generator = :random
 
-      singleton_class.alias_method_chain :instantiate, :uuid
+      # singleton_class.alias_method_chain :instantiate, :uuid
       before_create :generate_uuids_if_needed
     end
 
@@ -128,11 +128,11 @@ module ActiveUUID
         EOS
       end
 
-      def instantiate_with_uuid(record, record_models = nil)
+      def instantiate(record, record_models = nil)
         uuid_columns.each do |uuid_column|
           record[uuid_column] = UUIDTools::UUID.serialize(record[uuid_column]).to_s if record[uuid_column]
         end
-        instantiate_without_uuid(record)
+        super(record)
       end
 
       def uuid_columns

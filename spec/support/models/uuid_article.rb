@@ -1,3 +1,3 @@
 class UuidArticle < ActiveRecord::Base
-  include ActiveUUID::UUID
+  prepend ActiveUUID::UUID
 end
