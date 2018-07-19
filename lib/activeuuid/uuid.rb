@@ -103,7 +103,7 @@ module ActiveUUID
       class_attribute :_uuid_generator, instance_writer: false
       self._uuid_generator = :random
 
-      singleton_class.instantiate
+      # singleton_class.alias_method_chain :instantiate, :uuid
       before_create :generate_uuids_if_needed
     end
 
