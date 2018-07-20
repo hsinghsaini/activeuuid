@@ -1,7 +1,7 @@
 require 'active_record'
 require 'active_support/concern'
 
-if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2
+if ActiveRecord::VERSION::MAJOR == 5 and ActiveRecord::VERSION::MINOR == 2
   module ActiveRecord
     module Type
       class UUID < Binary # :nodoc:
@@ -54,7 +54,9 @@ module ActiveUUID
         end
 
         def type_cast_code(var_name)
-          return "UUIDTools::UUID.serialize(#{var_name})" if type == :uuid
+          if ActiveRecord::VERSION::MAJOR < 4
+            return "UUIDTools::UUID.serialize(#{var_name})" if type == :uuid
+          end
           super(var_name)
         end
 
@@ -100,7 +102,9 @@ module ActiveUUID
 
       included do
         def type_cast(value)
-          return UUIDTools::UUID.serialize(value) if type == :uuid
+          if ActiveRecord::VERSION::MAJOR >= 4
+            return UUIDTools::UUID.serialize(value) if type == :uuid
+          end
           super(value)
         end
         # alias_method_chain :type_cast, :uuid if ActiveRecord::VERSION::MAJOR >= 4
@@ -181,7 +185,7 @@ module ActiveUUID
       ActiveRecord::ConnectionAdapters::Table.send :include, Migrations if defined? ActiveRecord::ConnectionAdapters::Table
       ActiveRecord::ConnectionAdapters::TableDefinition.send :include, Migrations if defined? ActiveRecord::ConnectionAdapters::TableDefinition
 
-      if ActiveRecord::VERSION::MAJOR == 4 and ActiveRecord::VERSION::MINOR == 2
+      if ActiveRecord::VERSION::MAJOR == 5 and ActiveRecord::VERSION::MINOR == 2
         ActiveRecord::ConnectionAdapters::Mysql2Adapter.send :prepend, AbstractAdapter if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
         ActiveRecord::ConnectionAdapters::SQLite3Adapter.send :prepend, AbstractAdapter if defined? ActiveRecord::ConnectionAdapters::SQLite3Adapter
       else
