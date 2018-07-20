@@ -136,7 +136,7 @@ module ActiveUUID
       end
 
       def uuid_columns
-        @uuid_columns ||= columns.select { |c| c.type == :uuid }.map(&:name)
+        @uuid_columns ||= columns.select { |c| c.type == :binary }.map(&:name)
       end
     end
 
